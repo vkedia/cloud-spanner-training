@@ -32,5 +32,19 @@ public class Lab2 {
 	List<Transaction> getLastNTransactions(DatabaseClient client, long accountId, int n) {
 		return null;
     }
+	
+	/**
+	 * Adds 1% interest to every Savings account.
+	 */
+	void addInterest(DatabaseClient client) {
+		
+	}
+	
+	/**
+	 * Returns the total balance across all accounts in the bank.
+	 */
+	long getBankBalance(DatabaseClient client) {
+		return 0;
+	}
 
 }

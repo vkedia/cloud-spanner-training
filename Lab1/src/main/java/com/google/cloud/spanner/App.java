@@ -10,7 +10,7 @@ import com.google.cloud.spanner.Lab2.Transaction;
 public class App {
 
   private static final String INSTANCE_ID = "test-instance";
-  private static final String DATABASE_ID = "example-db";
+  private static final String DATABASE_ID = "bankdb";
 
   public static void main(String[] args ) {
     if (args.length < 2) {
@@ -53,6 +53,13 @@ public class App {
         	for (Transaction transaction : transactions) {
         		System.out.printf("%s %s %d", transaction.transactionTime, transaction.memo, transaction.amountInCents);
         	}
+        	break;
+        case "add-interest":
+        	new Lab2().addInterest(client);
+        	break;
+        case "bank-balance":
+        	System.out.println(new Lab2().getBankBalance(client));
+        	break;
         default:
           System.out.println("Unrecognized command: " + command);
           printUsage();
@@ -69,5 +76,7 @@ public class App {
       System.out.println("<command> withdraw <account-id> <amount>");
       System.out.println("<command> customer-balance <customer-id>");
       System.out.println("<command> last-transactions <account-id> <n>");
+      System.out.println("<command> add-interest");
+      System.out.println("<command> bank-balance");
   }
 }
