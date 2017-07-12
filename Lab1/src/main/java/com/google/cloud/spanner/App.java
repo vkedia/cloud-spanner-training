@@ -1,5 +1,8 @@
 package com.google.cloud.spanner;
 
+import java.util.List;
+
+import com.google.cloud.spanner.Lab2.Transaction;
 
 /**
  * Lab 1.
@@ -9,32 +12,10 @@ public class App {
   private static final String INSTANCE_ID = "test-instance";
   private static final String DATABASE_ID = "example-db";
 
-  static double getAccountBalance(DatabaseClient client, long accountId) {
-    return 0;
-  }
-
-  static double getCustomerBalance(DatabaseClient client, long customerId) {
-    return 0;
-  }
-
-  static void depositMoney(DatabaseClient client, long accountId, double amount) {
-  }
-
-  /**
-   * Returns false if money could not be withdrawn due to insufficient balance.
-   */
-  static boolean withdrawMoney(DatabaseClient client, long accountId, double amount) {
-    return false;
-  }
-
   public static void main(String[] args ) {
     if (args.length < 2) {
       System.out.println("Insufficient number of arguments");
-      System.out.println("Usage:");
-      System.out.println("<command> account-balance <account-id>");
-      System.out.println("<command> customer-balance <customer-id>");
-      System.out.println("<command> deposit <account-id> <amount>");
-      System.out.println("<command> withdraw <account-id> <amount>");
+      printUsage();
       return;
     }
     SpannerOptions options = SpannerOptions.newBuilder().build();
@@ -46,30 +27,47 @@ public class App {
       switch (command) {
         case "account-balance":
           long accountId = Long.parseLong(args[1]);
-          System.out.println(getAccountBalance(client, accountId));
-          break;
-        case "customer-balance":
-          long customerId = Long.parseLong(args[1]);
-          System.out.println(getCustomerBalance(client, customerId));
+          System.out.println(new Lab1().getAccountBalance(client, accountId));
           break;
         case "deposit":
           accountId = Long.parseLong(args[1]);
-          double amount = Double.parseDouble(args[2]);
-          depositMoney(client, accountId, amount);
+          long amount = Long.parseLong(args[2]);
+          new Lab1().depositMoney(client, accountId, amount);
           break;
         case "withdraw":
           accountId = Long.parseLong(args[1]);
-          amount = Double.parseDouble(args[2]);
-          boolean success = withdrawMoney(client, accountId, amount);
+          amount = Long.parseLong(args[2]);
+          boolean success = new Lab1().withdrawMoney(client, accountId, amount);
           if (!success) {
             System.out.println("Insufficient balance");
           }
           break;
+        case "customer-balance":
+          long customerId = Long.parseLong(args[1]);
+          System.out.println(new Lab2().getCustomerBalance(client, customerId));
+          break;
+        case "last-transactions":
+        	accountId = Long.parseLong(args[1]);
+        	int n = Integer.parseInt(args[2]);
+        	List<Transaction> transactions = new Lab2().getLastNTransactions(client, accountId, n);
+        	for (Transaction transaction : transactions) {
+        		System.out.printf("%s %s %d", transaction.transactionTime, transaction.memo, transaction.amountInCents);
+        	}
         default:
           System.out.println("Unrecognized command: " + command);
+          printUsage();
       }
     } finally {
       spanner.close();
     }
+  }
+  
+  private static void printUsage() {
+	  System.out.println("Usage:");
+      System.out.println("<command> account-balance <account-id>");
+      System.out.println("<command> deposit <account-id> <amount>");
+      System.out.println("<command> withdraw <account-id> <amount>");
+      System.out.println("<command> customer-balance <customer-id>");
+      System.out.println("<command> last-transactions <account-id> <n>");
   }
 }

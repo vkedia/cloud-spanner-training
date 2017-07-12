@@ -7,17 +7,14 @@ public class App {
 
 	public static void main(String[] args) {
 		if (args.length == 0) {
-			System.err.println("Usage:");
-			System.err.println("<command> setup");
-			System.err.println("<command> getlargetransactions");
-			System.err.println("<command> balance <customerId>");
+			System.err.println("Insufficient number of arguments");
+			printUsage();
 			return;
 		}
 		SpannerOptions options = SpannerOptions.newBuilder().setNumChannels(1).build();
 		Spanner spanner = options.getService();
 		DatabaseId db = DatabaseId.of(options.getProjectId(), INSTANCE_ID, DATABASE_ID);
 		try {
-			System.out.println(args[0]);
 			if (args[0].equals("setup")) {
 				System.out.println("Setting up database");
 				new SetupDatabase().setupDatabase(db, spanner);
@@ -29,11 +26,22 @@ public class App {
 			} else if (args[0].equals("customer-transactions")) {
 				long customerId = Long.parseLong(args[1]);
 				new Lab3().printTransactions(customerId, db, spanner);
+			} else {
+				System.err.println("Invalid command:" + args[0]);
+				printUsage();
 			}
 		} finally {
 			spanner.close();
 		}
 
+	}
+	
+	private static void printUsage() {
+		System.err.println("Usage:");
+		System.err.println("<command> setup");
+		System.err.println("<command> large-transactions");
+		System.err.println("<command> customer-balance <customerId>");
+		System.err.println("<command> customer-transactions <customerId>");
 	}
 
 }
