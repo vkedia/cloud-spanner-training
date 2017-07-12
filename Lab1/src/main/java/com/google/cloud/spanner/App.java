@@ -1,6 +1,5 @@
 package com.google.cloud.spanner;
 
-import com.google.cloud.spanner.*;
 
 /**
  * Lab 1.
